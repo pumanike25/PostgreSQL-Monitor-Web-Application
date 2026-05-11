@@ -80,6 +80,31 @@ CREATE EXTENSION pg_stat_statements;
 *   **Backend**: Right-click the `src/test/java` package in Eclipse and select `Run As -> JUnit Test`.
 *   **Frontend**: Run `npm run test` in the terminal to execute the Vitest suite.
 
+## Testing Strategy & Coverage
+
+The application includes a comprehensive test suite designed to ensure data integrity and API reliability. The focus is on Unit Testing and Component Mocking to validate logic without requiring a live AI connection or an active file system during the build process.
+Backend Tests (JUnit 5 & Mockito)
+
+The backend tests, located in MetricsControllerTest.java, validate the following core logic:
+
+*   **Controller Mapping**: Verifies that all REST endpoints return the correct HTTP status codes and payloads.
+
+*   **Service Mocking**: Uses Mockito to simulate the AI Service and Collector Service. This ensures we can test the Controller logic without spending AI tokens or depending on the local database state.
+
+*   **Data Consistency**: Ensures that hardware metrics (CPU, RAM) are correctly formatted and mapped to the SystemMetrics model before being sent to the frontend.
+
+*   **Resilience**: Validates that the application handles "Edge Cases," such as returning an empty history list if the CSV audit file has not been created yet.
+
+The frontend tests focus on the User Experience (UX) and Interface Integrity:
+
+*   **Component Rendering**: Ensures the dashboard, tables, and AI report sections load correctly.
+
+*   **Internationalization (i18n)**: Verifies that the language toggle correctly updates the UI labels from English to Romanian.
+
+*   **Conditional Rendering**: Checks that "Warning" states (like high CPU or Deadlocks) are visually displayed to the user as intended.
+
+*   **Mocked API Calls**: Tests the frontend's ability to handle backend responses (and errors) gracefully using mocked data.
+
 ## Security Note
 
 Files containing sensitive data (`application-secret.properties`, `.env.local`, and `database_metrics.csv`) are explicitly ignored by Git via `.gitignore` to prevent unauthorized access to credentials and private audit logs.
